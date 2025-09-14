@@ -1,9 +1,9 @@
+from datetime import datetime
+
+from . import backup
+from . import config
+
 import click
-import json
-
-
-CONFIG_FILE = "config.json"
-DEAFAULT_CONFIG = {"backup_directory": "cwd", "lfs": False, "pat": ""}
 
 
 @click.group()
@@ -11,29 +11,26 @@ def cli():
     pass
 
 
-@cli.command()
-def config():
-    with open(CONFIG_FILE, "w", encoding="utf-8") as f:
-        json.dump(DEAFAULT_CONFIG, f, indent=4)
+@cli.command(name="config")
+def configure():
+    config.reset()
 
 
-@cli.command()
+@cli.command(name="backup")
 @click.argument("arg")
-def backup(arg):
-    if arg == "all":
-        click.echo("Not currently supported.")
-    elif arg == "public":
-        click.echo("Not currently supported.")
-    elif arg == "private":
-        click.echo("Not currently supported.")
-    else:
-        click.echo(f"backing up {arg}")
-
-
-@cli.command()
-def status():
-    click.echo("Not currently supported.")
+def backup_command(arg):
+    match arg.lower():
+        case "all":
+            click.echo("Not currently supported.")
+        case "public":
+            click.echo("Not currently supported.")
+        case "private":
+            click.echo("Not currently supported.")
+        case _:
+            repo_name = arg
+            backup.from_repo_name(configuration, repo_name)
 
 
 if __name__ == "__main__":
+    configuration = config.load()
     cli()
